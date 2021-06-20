@@ -1,0 +1,56 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
+          enabled: true
+      routes:
+        - id: LIBRARY-SERVICE
+          uri: http://localhost:9000
+          predicates:
+          - Path=/library/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: LIBRARY-SERVICE
+                fallbackuri: forward:/libraryfallback
+        - id: BOOK-SERVICE
+          uri: http://localhost:9001
+          predicates:
+          - Path=/books/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: BOOK-SERVICE
+                fallbackuri: forward:/bookfallback
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    instance:
+      hostname: localhost

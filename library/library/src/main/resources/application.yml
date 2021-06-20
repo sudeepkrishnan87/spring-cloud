@@ -1,0 +1,28 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: LIBRARY-SERVICE
+  h2:
+    console:
+      enabled: true
+  datasource:
+    name: test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: embedded
+    url: jdbc:h2:mem:test
+    hibernate.ddl-auto: update
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    instance:
+      hostname: localhost
